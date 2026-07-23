@@ -1,0 +1,19 @@
+# Normalize line endings: LF in the repo, checked out native on Windows.
+* text=auto eol=lf
+
+# Explicitly treat these as text.
+*.py    text
+*.md    text
+*.toml  text
+*.cfg   text
+*.txt   text
+*.yml   text
+*.yaml  text
+
+# Binary assets (never diff/merge as text).
+*.png   binary
+*.jpg   binary
+*.jpeg  binary
+*.gif   binary
+*.pdf   binary
+*.pt    binary

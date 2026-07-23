@@ -1,0 +1,160 @@
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sft-dataset-builder"
+dynamic = ["version"]
+description = "Convert unstructured documents, images, audio, and video into structured SFT training datasets — fully locally."
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+# TODO: replace with the real maintainer name if different.
+authors = [{ name = "hika.dalju", email = "hika.dalju@mkd.kr" }]
+keywords = [
+    "sft",
+    "fine-tuning",
+    "dataset",
+    "llm",
+    "ocr",
+    "whisper",
+    "jsonl",
+    "machine-learning",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Text Processing :: General",
+    "Typing :: Typed",
+]
+# The core pipeline (extract -> chunk -> format -> save) is pure-Python.
+# Heavy, format-specific dependencies are opt-in via the extras below, and each
+# extractor raises a helpful message if its extra is missing.
+dependencies = []
+
+[project.optional-dependencies]
+pdf = ["PyMuPDF>=1.23"]
+docx = ["python-docx>=1.1", "odfpy>=1.4", "striprtf>=0.0.26"]
+ocr = ["Pillow>=10.0", "pytesseract>=0.3.10"]
+audio = ["openai-whisper>=20231117"]
+video = ["opencv-python>=4.9", "openai-whisper>=20231117"]
+ui = ["streamlit>=1.32"]
+all = [
+    "PyMuPDF>=1.23",
+    "python-docx>=1.1",
+    "odfpy>=1.4",
+    "striprtf>=0.0.26",
+    "Pillow>=10.0",
+    "pytesseract>=0.3.10",
+    "opencv-python>=4.9",
+    "openai-whisper>=20231117",
+    "streamlit>=1.32",
+]
+dev = [
+    "pytest>=7.0",
+    "pytest-cov>=4.0",
+    "ruff>=0.5",
+    "mypy>=1.8",
+    "build>=1.0",
+]
+
+[project.urls]
+# TODO: replace OWNER with the real GitHub org/user once the repo is pushed.
+Homepage = "https://github.com/OWNER/sft-dataset-builder"
+Repository = "https://github.com/OWNER/sft-dataset-builder"
+Issues = "https://github.com/OWNER/sft-dataset-builder/issues"
+Changelog = "https://github.com/OWNER/sft-dataset-builder/blob/main/CHANGELOG.md"
+
+[project.scripts]
+sft-dataset-builder = "sft_dataset_builder.cli:main"
+sft-dataset-builder-ui = "sft_dataset_builder._cli:launch_ui"
+
+[tool.setuptools.dynamic]
+version = { attr = "sft_dataset_builder.__version__" }
+
+[tool.setuptools.packages.find]
+include = ["sft_dataset_builder*"]
+exclude = ["tests*"]
+
+[tool.setuptools.package-data]
+sft_dataset_builder = ["py.typed"]
+
+# --------------------------------------------------------------------------- #
+# Tooling
+# --------------------------------------------------------------------------- #
+
+[tool.ruff]
+line-length = 100
+target-version = "py39"
+src = ["sft_dataset_builder", "tests"]
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "F",   # pyflakes
+    "W",   # pycodestyle warnings
+    "I",   # isort
+    "B",   # flake8-bugbear
+    "BLE", # flake8-blind-except
+    "C4",  # flake8-comprehensions
+    "SIM", # flake8-simplify
+    "RUF", # ruff-specific rules
+]
+# Line length is enforced by the formatter; don't fail lint on long strings/URLs.
+ignore = ["E501"]
+
+[tool.ruff.lint.per-file-ignores]
+# Tests use assert freely; the Streamlit app is intentionally script-shaped.
+"tests/*" = ["B011"]
+
+[tool.mypy]
+# The package supports 3.9+ at runtime (all annotations are PEP 563 strings via
+# `from __future__ import annotations`); 3.10 is the lowest target mypy accepts.
+python_version = "3.10"
+files = ["sft_dataset_builder"]
+warn_unused_configs = true
+warn_redundant_casts = true
+no_implicit_optional = true
+# Optional, heavy third-party deps (fitz, whisper, cv2, streamlit, ...) ship no stubs.
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "sft_dataset_builder.app"
+ignore_errors = true
+
+[tool.pytest.ini_options]
+minversion = "7.0"
+testpaths = ["tests"]
+addopts = "-ra -q --strict-markers"
+markers = [
+    "requires_tesseract: test needs the tesseract OCR binary installed",
+    "requires_ffmpeg: test needs the ffmpeg binary installed",
+    "requires_whisper: test needs openai-whisper installed",
+]
+
+[tool.coverage.run]
+source = ["sft_dataset_builder"]
+omit = [
+    "sft_dataset_builder/app.py",
+    "sft_dataset_builder/_cli.py",
+]
+
+[tool.coverage.report]
+show_missing = true
+exclude_lines = [
+    "pragma: no cover",
+    "raise NotImplementedError",
+    "raise AssertionError",
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
+]

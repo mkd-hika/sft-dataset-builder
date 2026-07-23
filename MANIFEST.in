@@ -1,0 +1,8 @@
+include LICENSE
+include README.md
+include CHANGELOG.md
+include requirements.txt
+include sft_dataset_builder/py.typed
+
+recursive-exclude tests *
+global-exclude __pycache__ *.py[cod]

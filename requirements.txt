@@ -1,0 +1,26 @@
+# Convenience "install everything" pin set, equivalent to:
+#     pip install "sft-dataset-builder[all]"
+#
+# The core pipeline needs none of these — they are only required for the media
+# extractors. Prefer installing just the extras you need (see pyproject.toml):
+#     pip install "sft-dataset-builder[pdf,docx]"
+#
+# System binaries (not pip-installable): `tesseract` for OCR, `ffmpeg` for
+# audio/video.
+
+# Documents
+PyMuPDF>=1.23
+python-docx>=1.1
+odfpy>=1.4
+striprtf>=0.0.26
+
+# Image / frame OCR
+Pillow>=10.0
+pytesseract>=0.3.10
+
+# Audio / video
+openai-whisper>=20231117
+opencv-python>=4.9
+
+# UI
+streamlit>=1.32
