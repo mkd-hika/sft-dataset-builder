@@ -1,8 +1,8 @@
 # SFT Dataset Builder 🧬
 
-[![CI](https://github.com/OWNER/sft-dataset-builder/actions/workflows/ci.yml/badge.svg)](https://github.com/OWNER/sft-dataset-builder/actions/workflows/ci.yml)
+[![CI](https://github.com/hika.dalju/sft-dataset-builder/actions/workflows/ci.yml/badge.svg)](https://github.com/hika.dalju/sft-dataset-builder/actions/workflows/ci.yml)
 [![Python](https://img.shields.io/badge/python-3.9%2B-blue.svg)](https://www.python.org/downloads/)
-[![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+[![License: Apache 2.0](https://img.shields.io/badge/license-Apache%202.0-green.svg)](LICENSE)
 [![Code style: Ruff](https://img.shields.io/badge/lint-ruff-261230.svg)](https://github.com/astral-sh/ruff)
 
 Convert unstructured data — **documents** (PDF, DOCX, TXT, MD, RTF, ODT), **images** (OCR),
@@ -276,5 +276,5 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for how to add a new extractor.
 
 ## License
 
-MIT — see [LICENSE](LICENSE).
+Apache License 2.0 — see [LICENSE](LICENSE) and [NOTICE](NOTICE).
 

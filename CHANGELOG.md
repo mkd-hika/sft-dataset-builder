@@ -18,7 +18,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   extras** per format group (`pdf`, `docx`, `ocr`, `audio`, `video`, `ui`,
   plus `all` and `dev`). The core pipeline is now pure-Python with no required
   third-party dependencies.
-- `LICENSE` (MIT), `py.typed` marker (PEP 561 typed package), `MANIFEST.in`.
+- `LICENSE` (Apache-2.0) and `NOTICE`, `py.typed` marker (PEP 561 typed
+  package), `MANIFEST.in`.
 - Test suite under `tests/` covering the chunker, formatter, pipeline, text
   extractor, extractor registry, and CLI.
 - Tooling configuration: Ruff (lint + format), Mypy, pytest, coverage,
@@ -47,6 +48,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   formatter (alpaca, sharegpt, openai, raw, dpo, orpo).
 - `build_dataset` pipeline and a Streamlit UI.
 
-[Unreleased]: https://github.com/OWNER/sft-dataset-builder/compare/v0.2.0...HEAD
-[0.2.0]: https://github.com/OWNER/sft-dataset-builder/compare/v0.1.0...v0.2.0
-[0.1.0]: https://github.com/OWNER/sft-dataset-builder/releases/tag/v0.1.0
+[Unreleased]: https://github.com/hika.dalju/sft-dataset-builder/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/hika.dalju/sft-dataset-builder/compare/v0.1.0...v0.2.0
+[0.1.0]: https://github.com/hika.dalju/sft-dataset-builder/releases/tag/v0.1.0

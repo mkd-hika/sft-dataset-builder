@@ -8,8 +8,7 @@ dynamic = ["version"]
 description = "Convert unstructured documents, images, audio, and video into structured SFT training datasets — fully locally."
 readme = "README.md"
 requires-python = ">=3.9"
-license = { text = "MIT" }
-# TODO: replace with the real maintainer name if different.
+license = { text = "Apache-2.0" }
 authors = [{ name = "hika.dalju", email = "hika.dalju@mkd.kr" }]
 keywords = [
     "sft",
@@ -25,7 +24,7 @@ classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
     "Intended Audience :: Science/Research",
-    "License :: OSI Approved :: MIT License",
+    "License :: OSI Approved :: Apache Software License",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3 :: Only",
@@ -69,11 +68,10 @@ dev = [
 ]
 
 [project.urls]
-# TODO: replace OWNER with the real GitHub org/user once the repo is pushed.
-Homepage = "https://github.com/OWNER/sft-dataset-builder"
-Repository = "https://github.com/OWNER/sft-dataset-builder"
-Issues = "https://github.com/OWNER/sft-dataset-builder/issues"
-Changelog = "https://github.com/OWNER/sft-dataset-builder/blob/main/CHANGELOG.md"
+Homepage = "https://github.com/hika.dalju/sft-dataset-builder"
+Repository = "https://github.com/hika.dalju/sft-dataset-builder"
+Issues = "https://github.com/hika.dalju/sft-dataset-builder/issues"
+Changelog = "https://github.com/hika.dalju/sft-dataset-builder/blob/main/CHANGELOG.md"
 
 [project.scripts]
 sft-dataset-builder = "sft_dataset_builder.cli:main"
