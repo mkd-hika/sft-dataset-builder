@@ -6,6 +6,7 @@ import json
 from pathlib import Path
 
 import pytest
+
 from sft_dataset_builder import __version__
 from sft_dataset_builder.cli import main
 

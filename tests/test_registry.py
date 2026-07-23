@@ -5,6 +5,7 @@ from __future__ import annotations
 from pathlib import Path
 
 import pytest
+
 from sft_dataset_builder.extractors import (
     SUPPORTED_EXTENSIONS,
     DocxExtractor,

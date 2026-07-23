@@ -26,4 +26,4 @@ repos:
       - id: mypy
         additional_dependencies: []
         pass_filenames: false
-        args: ["sft_dataset_builder"]
+        args: ["src"]

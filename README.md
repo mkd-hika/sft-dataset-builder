@@ -67,7 +67,23 @@ always runs on your machine.
 
 ---
 
-## Module structure
+## Project layout
+
+Standard `src/` layout — the importable package lives under `src/`, tests and
+tooling config at the repo root:
+
+```
+sft_dataset_builder/          # repo root
+├── src/sft_dataset_builder/  # the package (see below)
+├── tests/                    # pytest suite (dependency-free by default)
+├── pyproject.toml            # packaging + tool config (ruff, mypy, pytest)
+├── requirements.txt          # convenience "install everything" pin set
+├── Makefile                  # dev shortcuts: make check / test / build
+├── LICENSE · NOTICE          # Apache-2.0
+└── README.md · CHANGELOG.md · CONTRIBUTING.md
+```
+
+### Package modules (`src/sft_dataset_builder/`)
 
 ```
 sft_dataset_builder/

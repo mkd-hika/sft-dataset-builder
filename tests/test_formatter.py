@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import pytest
+
 from sft_dataset_builder.chunker import Chunk
 from sft_dataset_builder.formatter import VALID_FORMATS, format_chunk, format_chunks
 

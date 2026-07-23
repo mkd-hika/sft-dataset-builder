@@ -81,8 +81,8 @@ sft-dataset-builder-ui = "sft_dataset_builder._cli:launch_ui"
 version = { attr = "sft_dataset_builder.__version__" }
 
 [tool.setuptools.packages.find]
+where = ["src"]
 include = ["sft_dataset_builder*"]
-exclude = ["tests*"]
 
 [tool.setuptools.package-data]
 sft_dataset_builder = ["py.typed"]
@@ -94,7 +94,7 @@ sft_dataset_builder = ["py.typed"]
 [tool.ruff]
 line-length = 100
 target-version = "py39"
-src = ["sft_dataset_builder", "tests"]
+src = ["src", "tests"]
 
 [tool.ruff.lint]
 select = [
@@ -119,7 +119,8 @@ ignore = ["E501"]
 # The package supports 3.9+ at runtime (all annotations are PEP 563 strings via
 # `from __future__ import annotations`); 3.10 is the lowest target mypy accepts.
 python_version = "3.10"
-files = ["sft_dataset_builder"]
+files = ["src"]
+mypy_path = "src"
 warn_unused_configs = true
 warn_redundant_casts = true
 no_implicit_optional = true
@@ -143,8 +144,8 @@ markers = [
 [tool.coverage.run]
 source = ["sft_dataset_builder"]
 omit = [
-    "sft_dataset_builder/app.py",
-    "sft_dataset_builder/_cli.py",
+    "*/sft_dataset_builder/app.py",
+    "*/sft_dataset_builder/_cli.py",
 ]
 
 [tool.coverage.report]

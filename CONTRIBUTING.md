@@ -48,7 +48,7 @@ python -m pytest --cov=sft_dataset_builder --cov-report=term-missing
 
 ## Adding a new extractor
 
-1. Create `sft_dataset_builder/extractors/<name>.py` subclassing `BaseExtractor`.
+1. Create `src/sft_dataset_builder/extractors/<name>.py` subclassing `BaseExtractor`.
 2. Set `supported_extensions` and implement `extract(self, path, **kwargs)`,
    returning an `ExtractionResult` built from `ExtractedUnit`s. Import heavy,
    optional dependencies **inside** `extract` and raise a clear `ImportError`

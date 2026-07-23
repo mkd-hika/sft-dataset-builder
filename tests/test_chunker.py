@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import pytest
+
 from sft_dataset_builder.chunker import VALID_STRATEGIES, Chunk, chunk_units
 from sft_dataset_builder.extractors.base import ExtractedUnit
 
