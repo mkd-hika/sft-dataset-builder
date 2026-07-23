@@ -48,6 +48,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   formatter (alpaca, sharegpt, openai, raw, dpo, orpo).
 - `build_dataset` pipeline and a Streamlit UI.
 
-[Unreleased]: https://github.com/hika.dalju/sft-dataset-builder/compare/v0.2.0...HEAD
-[0.2.0]: https://github.com/hika.dalju/sft-dataset-builder/compare/v0.1.0...v0.2.0
-[0.1.0]: https://github.com/hika.dalju/sft-dataset-builder/releases/tag/v0.1.0
+[Unreleased]: https://github.com/mkd-hika/sft-dataset-builder/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/mkd-hika/sft-dataset-builder/compare/v0.1.0...v0.2.0
+[0.1.0]: https://github.com/mkd-hika/sft-dataset-builder/releases/tag/v0.1.0

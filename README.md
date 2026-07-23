@@ -1,6 +1,6 @@
 # SFT Dataset Builder 🧬
 
-[![CI](https://github.com/hika.dalju/sft-dataset-builder/actions/workflows/ci.yml/badge.svg)](https://github.com/hika.dalju/sft-dataset-builder/actions/workflows/ci.yml)
+[![CI](https://github.com/mkd-hika/sft-dataset-builder/actions/workflows/ci.yml/badge.svg)](https://github.com/mkd-hika/sft-dataset-builder/actions/workflows/ci.yml)
 [![Python](https://img.shields.io/badge/python-3.9%2B-blue.svg)](https://www.python.org/downloads/)
 [![License: Apache 2.0](https://img.shields.io/badge/license-Apache%202.0-green.svg)](LICENSE)
 [![Code style: Ruff](https://img.shields.io/badge/lint-ruff-261230.svg)](https://github.com/astral-sh/ruff)

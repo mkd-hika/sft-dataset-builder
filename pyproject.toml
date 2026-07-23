@@ -68,10 +68,10 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/hika.dalju/sft-dataset-builder"
-Repository = "https://github.com/hika.dalju/sft-dataset-builder"
-Issues = "https://github.com/hika.dalju/sft-dataset-builder/issues"
-Changelog = "https://github.com/hika.dalju/sft-dataset-builder/blob/main/CHANGELOG.md"
+Homepage = "https://github.com/mkd-hika/sft-dataset-builder"
+Repository = "https://github.com/mkd-hika/sft-dataset-builder"
+Issues = "https://github.com/mkd-hika/sft-dataset-builder/issues"
+Changelog = "https://github.com/mkd-hika/sft-dataset-builder/blob/main/CHANGELOG.md"
 
 [project.scripts]
 sft-dataset-builder = "sft_dataset_builder.cli:main"
