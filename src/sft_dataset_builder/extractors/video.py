@@ -7,6 +7,7 @@ import tempfile
 from pathlib import Path
 from typing import Any, ClassVar, Optional
 
+from ._ocr import configure_tesseract
 from .audio import AudioExtractor
 from .base import BaseExtractor, ExtractedUnit, ExtractionResult
 
@@ -134,6 +135,7 @@ class VideoExtractor(BaseExtractor):
             warnings.append("pytesseract/Pillow not installed; skipping frame OCR.")
             return units, warnings
 
+        configure_tesseract(pytesseract)
         cap = cv2.VideoCapture(str(path))
         if not cap.isOpened():
             warnings.append("could not open video for frame extraction.")

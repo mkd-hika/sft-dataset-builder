@@ -5,6 +5,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any, ClassVar
 
+from ._ocr import configure_tesseract
 from .base import BaseExtractor, ExtractedUnit, ExtractionResult
 
 
@@ -39,6 +40,7 @@ class ImageExtractor(BaseExtractor):
                 "tesseract binary is installed on your system."
             ) from exc
 
+        configure_tesseract(pytesseract)
         warnings: list[str] = []
         # Image.open returns an ImageFile; annotate as the base Image so the
         # later .convert()/ImageOps reassignments type-check cleanly.

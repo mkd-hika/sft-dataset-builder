@@ -12,6 +12,7 @@ import logging
 from pathlib import Path
 from typing import Any, ClassVar
 
+from ._ocr import configure_tesseract
 from .base import BaseExtractor, ExtractedUnit, ExtractionResult
 
 logger = logging.getLogger("sft_dataset_builder")
@@ -93,6 +94,7 @@ class PDFExtractor(BaseExtractor):
             )
             return ""
 
+        configure_tesseract(pytesseract)
         texts: list[str] = []
         try:
             image_list = page.get_images(full=True)
