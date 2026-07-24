@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Format-readiness probe (`sft_dataset_builder.capabilities.probe_capabilities`)
+  that reports which input-format groups are usable vs. need an optional extra
+  or system binary, with an actionable install hint per group.
+- Streamlit UI now shows a "Supported inputs" panel (ready ✅ / needs-install ⚠️)
+  above the uploader, so missing dependencies are surfaced before upload instead
+  of failing mid-build.
+- Tesseract binary auto-detection (`extractors/_ocr.py`) so image / PDF-image /
+  video-frame OCR works without manual PATH setup on Windows/macOS/Linux.
+
 ## [0.2.0]
 
 ### Added

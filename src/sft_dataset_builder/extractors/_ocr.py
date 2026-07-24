@@ -18,16 +18,30 @@ _TESSERACT_CANDIDATES = (
 )
 
 
+def find_tesseract() -> str | None:
+    """Return a usable path to the tesseract binary, or None if not found.
+
+    Checks PATH first, then the well-known install locations above. Has no
+    side effects, so it's safe to call from capability probing.
+    """
+    on_path = shutil.which("tesseract")
+    if on_path:
+        return on_path
+    for candidate in _TESSERACT_CANDIDATES:
+        if os.path.isfile(candidate):
+            return candidate
+    return None
+
+
 def configure_tesseract(pytesseract: Any) -> None:
     """Ensure pytesseract can find the tesseract binary.
 
     If ``tesseract`` is already on PATH, nothing changes. Otherwise fall back to
-    the well-known install locations above so OCR works out of the box even when
-    the binary's directory was never added to PATH (common on Windows).
+    the well-known install locations so OCR works out of the box even when the
+    binary's directory was never added to PATH (common on Windows).
     """
     if shutil.which("tesseract"):
         return
-    for candidate in _TESSERACT_CANDIDATES:
-        if os.path.isfile(candidate):
-            pytesseract.pytesseract.tesseract_cmd = candidate
-            return
+    path = find_tesseract()
+    if path is not None:
+        pytesseract.pytesseract.tesseract_cmd = path

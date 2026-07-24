@@ -14,6 +14,7 @@ from typing import Any
 
 import streamlit as st
 
+from sft_dataset_builder.capabilities import probe_capabilities
 from sft_dataset_builder.chunker import VALID_STRATEGIES
 from sft_dataset_builder.extractors import SUPPORTED_EXTENSIONS
 from sft_dataset_builder.extractors.audio import load_whisper_model
@@ -178,6 +179,36 @@ with st.sidebar:
 # --------------------------------------------------------------------------- #
 
 st.subheader("📤 Upload source files")
+
+# -- Format readiness panel ---------------------------------------------------
+_caps = probe_capabilities()
+_ready_count = sum(1 for c in _caps if c.ready)
+with st.expander(
+    f"🧩 Supported inputs — {_ready_count}/{len(_caps)} format groups ready",
+    expanded=_ready_count < len(_caps),
+):
+    st.caption(
+        "Which formats this install can process right now. Missing ones still "
+        "upload, but fail until you install what's listed — then **restart** the app."
+    )
+    for cap in _caps:
+        exts = ", ".join(cap.extensions)
+        if cap.ready:
+            st.markdown(
+                f"✅ **{cap.label}** &nbsp;<span style='color:#9aa4b2;font-size:0.8rem'>{exts}</span>",
+                unsafe_allow_html=True,
+            )
+            if cap.optional_missing:
+                st.caption(
+                    f"    optional: `pip install {' '.join(cap.optional_missing)}` "
+                    "for higher-fidelity RTF"
+                )
+        else:
+            st.markdown(
+                f"⚠️ **{cap.label}** &nbsp;<span style='color:#9aa4b2;font-size:0.8rem'>{exts}</span>  \n"
+                f"&nbsp;&nbsp;&nbsp;&nbsp;`{cap.install_hint}`",
+                unsafe_allow_html=True,
+            )
 
 uploaded_files = st.file_uploader(
     "Drop documents, images, audio, or video files",

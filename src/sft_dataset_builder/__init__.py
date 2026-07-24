@@ -15,6 +15,7 @@ Quick start
 >>> result.num_samples
 """
 
+from .capabilities import FormatStatus, probe_capabilities
 from .chunker import Chunk, chunk_units
 from .extractors import SUPPORTED_EXTENSIONS, get_extractor_for
 from .formatter import VALID_FORMATS, format_chunk, format_chunks
@@ -28,11 +29,13 @@ __all__ = [
     "BuildResult",
     "Chunk",
     "FileReport",
+    "FormatStatus",
     "__version__",
     "build_dataset",
     "chunk_units",
     "format_chunk",
     "format_chunks",
     "get_extractor_for",
+    "probe_capabilities",
     "save_jsonl",
 ]
