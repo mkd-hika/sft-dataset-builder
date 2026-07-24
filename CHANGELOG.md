@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- New input formats and extractors: **HTML** (`.html/.htm`, `[html]` — with a
+  stdlib fallback), **LaTeX** (`.tex`, `[latex]` — with a regex fallback),
+  **PowerPoint** (`.pptx`, `[pptx]`), **EPUB** (`.epub`, `[epub]`), and
+  **CSV/TSV** (`.csv/.tsv`, built-in, header-aware one-row-per-sample).
+  `.odp` is now handled alongside `.odt` (no new dependency).
 - Format-readiness probe (`sft_dataset_builder.capabilities.probe_capabilities`)
   that reports which input-format groups are usable vs. need an optional extra
   or system binary, with an actionable install hint per group.

@@ -72,12 +72,18 @@ def test_module_installed_detects_stdlib_and_missing():
 
 
 def test_probe_reflects_a_missing_dependency(monkeypatch):
-    # Force every optional module to look absent -> only pure-Python Text is ready.
+    # Force every optional module + binary to look absent. Only groups with no
+    # required dependency (Text, HTML, LaTeX, CSV/TSV) stay ready.
     monkeypatch.setattr(caps, "_module_installed", lambda module: False)
     monkeypatch.setattr(caps, "_binary_present", lambda name: False)
     statuses = probe_capabilities()
-    ready = [s for s in statuses if s.ready]
-    assert len(ready) == 1
-    assert "Text" in ready[0].label
+    ready_labels = {s.label for s in statuses if s.ready}
+    assert any("Text" in label for label in ready_labels)
+    assert any("HTML" in label for label in ready_labels)
+    assert any("CSV" in label for label in ready_labels)
+    # Extra-dependent groups must now report as not ready.
     pdf = next(s for s in statuses if "PDF" in s.label)
+    assert pdf.ready is False
     assert pdf.install_hint == 'pip install "sft-dataset-builder[pdf]"'
+    audio = next(s for s in statuses if s.label == "Audio")
+    assert audio.ready is False

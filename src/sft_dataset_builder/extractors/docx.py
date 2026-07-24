@@ -10,15 +10,16 @@ from .base import BaseExtractor, ExtractedUnit, ExtractionResult
 
 
 class DocxExtractor(BaseExtractor):
-    """Handles .docx, .odt, and .rtf files."""
+    """Handles .docx, .odt, .odp, and .rtf files."""
 
-    supported_extensions: ClassVar[set[str]] = {".docx", ".odt", ".rtf"}
+    supported_extensions: ClassVar[set[str]] = {".docx", ".odt", ".odp", ".rtf"}
 
     def extract(self, path: Path, **kwargs: Any) -> ExtractionResult:
         suffix = path.suffix.lower()
         if suffix == ".docx":
             units, warnings = self._extract_docx(path)
-        elif suffix == ".odt":
+        elif suffix in (".odt", ".odp"):
+            # Both are OpenDocument XML; paragraph text extraction is identical.
             units, warnings = self._extract_odt(path)
         elif suffix == ".rtf":
             units, warnings = self._extract_rtf(path)

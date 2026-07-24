@@ -44,6 +44,10 @@ dependencies = []
 [project.optional-dependencies]
 pdf = ["PyMuPDF>=1.23"]
 docx = ["python-docx>=1.1", "odfpy>=1.4", "striprtf>=0.0.26"]
+html = ["beautifulsoup4>=4.11"]
+pptx = ["python-pptx>=0.6.21"]
+latex = ["pylatexenc>=2.10"]
+epub = ["EbookLib>=0.18", "beautifulsoup4>=4.11"]
 ocr = ["Pillow>=10.0", "pytesseract>=0.3.10"]
 audio = ["openai-whisper>=20231117"]
 video = ["opencv-python>=4.9", "openai-whisper>=20231117"]
@@ -53,6 +57,10 @@ all = [
     "python-docx>=1.1",
     "odfpy>=1.4",
     "striprtf>=0.0.26",
+    "beautifulsoup4>=4.11",
+    "python-pptx>=0.6.21",
+    "pylatexenc>=2.10",
+    "EbookLib>=0.18",
     "Pillow>=10.0",
     "pytesseract>=0.3.10",
     "opencv-python>=4.9",

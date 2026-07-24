@@ -8,8 +8,13 @@ from typing import Optional
 from .audio import AudioExtractor
 from .base import BaseExtractor, ExtractedUnit, ExtractionResult
 from .docx import DocxExtractor
+from .epub import EpubExtractor
+from .html import HTMLExtractor
 from .image import ImageExtractor
+from .latex import LatexExtractor
 from .pdf import PDFExtractor
+from .pptx import PptxExtractor
+from .tabular import TabularExtractor
 from .text import TextExtractor
 from .video import VideoExtractor
 
@@ -19,10 +24,15 @@ __all__ = [
     "AudioExtractor",
     "BaseExtractor",
     "DocxExtractor",
+    "EpubExtractor",
     "ExtractedUnit",
     "ExtractionResult",
+    "HTMLExtractor",
     "ImageExtractor",
+    "LatexExtractor",
     "PDFExtractor",
+    "PptxExtractor",
+    "TabularExtractor",
     "TextExtractor",
     "VideoExtractor",
     "get_extractor_for",
@@ -32,6 +42,11 @@ ALL_EXTRACTORS: list[BaseExtractor] = [
     TextExtractor(),
     PDFExtractor(),
     DocxExtractor(),
+    HTMLExtractor(),
+    LatexExtractor(),
+    TabularExtractor(),
+    PptxExtractor(),
+    EpubExtractor(),
     ImageExtractor(),
     AudioExtractor(),
     VideoExtractor(),

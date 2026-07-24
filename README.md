@@ -92,10 +92,16 @@ sft_dataset_builder/
 │   ├── base.py           # BaseExtractor, ExtractedUnit, ExtractionResult
 │   ├── text.py            # .txt, .md
 │   ├── pdf.py              # .pdf (PyMuPDF + embedded image OCR)
-│   ├── docx.py              # .docx, .odt, .rtf
-│   ├── image.py              # .png/.jpg/.tiff/... (pytesseract OCR)
-│   ├── audio.py                # .mp3/.wav/... (local openai-whisper)
-│   └── video.py                  # .mp4/.mov/... (OpenCV frames + audio track)
+│   ├── docx.py              # .docx, .odt, .odp, .rtf
+│   ├── html.py              # .html/.htm (BeautifulSoup + stdlib fallback)
+│   ├── latex.py             # .tex (pylatexenc + regex fallback)
+│   ├── tabular.py           # .csv/.tsv (header-aware, one row per sample)
+│   ├── pptx.py              # .pptx (python-pptx: slide text + notes)
+│   ├── epub.py              # .epub (ebooklib)
+│   ├── image.py             # .png/.jpg/.tiff/... (pytesseract OCR)
+│   ├── audio.py             # .mp3/.wav/... (local openai-whisper)
+│   └── video.py             # .mp4/.mov/... (OpenCV frames + audio track)
+├── capabilities.py       # probe which formats are ready vs. need an extra/binary
 ├── chunker.py            # paragraph / sentence / fixed / page / timestamp splitting
 ├── formatter.py          # alpaca / sharegpt / openai / raw / dpo / orpo output shapes
 ├── pipeline.py           # orchestrates extract -> chunk -> format -> save
@@ -250,12 +256,19 @@ their error message, while successfully processed files still produce samples.
 
 ## Supported input formats
 
-| Category  | Extensions |
-|-----------|------------|
-| Documents | `.pdf`, `.docx`, `.odt`, `.rtf`, `.txt`, `.md` |
-| Images    | `.png`, `.jpg`, `.jpeg`, `.tiff`, `.bmp`, `.webp`, `.gif` |
-| Audio     | `.mp3`, `.wav`, `.m4a`, `.flac`, `.ogg`, `.aac`, `.wma` |
-| Video     | `.mp4`, `.mov`, `.mkv`, `.avi`, `.webm`, `.m4v` |
+| Category  | Extensions | Extra |
+|-----------|------------|-------|
+| Documents | `.pdf` | `pdf` |
+| Documents | `.docx`, `.odt`, `.odp`, `.rtf` | `docx` |
+| Documents | `.txt`, `.md` | — (built-in) |
+| Documents | `.tex` (LaTeX) | `latex` |
+| Web       | `.html`, `.htm` | `html` |
+| Tabular   | `.csv`, `.tsv` | — (built-in) |
+| Slides    | `.pptx` | `pptx` |
+| Books     | `.epub` | `epub` |
+| Images    | `.png`, `.jpg`, `.jpeg`, `.tiff`, `.bmp`, `.webp`, `.gif` | `ocr` (+ tesseract) |
+| Audio     | `.mp3`, `.wav`, `.m4a`, `.flac`, `.ogg`, `.aac`, `.wma` | `audio` (+ ffmpeg) |
+| Video     | `.mp4`, `.mov`, `.mkv`, `.avi`, `.webm`, `.m4v` | `video` (+ ffmpeg) |
 
 ---
 
