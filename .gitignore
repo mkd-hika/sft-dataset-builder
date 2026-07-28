@@ -61,3 +61,7 @@ data/
 
 # Whisper / torch model cache (weights are large; never commit)
 *.pt
+
+# Personal reports / screenshots kept in the working dir (not part of the codebase)
+*.docx
+SFT--*.png

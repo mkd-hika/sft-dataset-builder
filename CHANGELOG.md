@@ -7,7 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0]
+
 ### Added
+- **Dataset curation** (`sft_dataset_builder.curation`): `clean_dataset`
+  (drop empty / too-short / too-long / low-signal content and near-duplicates),
+  `split_dataset` (deterministic train/validation split), and `quality_report`.
+  Exposed via new CLI flags (`--clean`, `--min-chars`, `--max-chars`,
+  `--no-dedup`, `--min-signal`, `--val-split`, `--seed`, `--report`) and a
+  "Post-processing" section in the Streamlit UI (cleaning report + train/val
+  downloads).
+- **Instruction generation** (`sft_dataset_builder.instruction_gen`): turn
+  extracted chunks into real instruction/answer pairs via a pluggable LLM
+  (`generate_instruction_samples`), with a stdlib OpenAI-compatible client
+  (`openai_compatible_client`, local Ollama/vLLM by default). CLI: `--gen-qa`
+  with `--qa-base-url` / `--qa-model` / `--qa-api-key` / `--qa-max-items`.
+- `examples/`: `generate_instructions.py` (extract → LLM instruction pairs →
+  clean → split) and `finetune_trl.py` (LoRA SFT on the JSONL), plus a README.
 - New input formats and extractors: **HTML** (`.html/.htm`, `[html]` — with a
   stdlib fallback), **LaTeX** (`.tex`, `[latex]` — with a regex fallback),
   **PowerPoint** (`.pptx`, `[pptx]`), **EPUB** (`.epub`, `[epub]`), and

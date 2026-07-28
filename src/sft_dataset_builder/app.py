@@ -16,6 +16,7 @@ import streamlit as st
 
 from sft_dataset_builder.capabilities import probe_capabilities
 from sft_dataset_builder.chunker import VALID_STRATEGIES
+from sft_dataset_builder.curation import clean_dataset, split_dataset
 from sft_dataset_builder.extractors import SUPPORTED_EXTENSIONS
 from sft_dataset_builder.extractors.audio import load_whisper_model
 from sft_dataset_builder.formatter import VALID_FORMATS
@@ -178,6 +179,24 @@ with st.sidebar:
     )
     ocr_video_frames = st.checkbox("OCR sampled video frames", value=False)
     frame_interval = st.slider("Video frame sample interval (s)", 2, 60, 10)
+
+    st.divider()
+    st.subheader("🧹 Post-processing")
+    do_clean = st.checkbox(
+        "Clean dataset",
+        value=False,
+        help="Drop empty / too-short / low-signal content and remove near-duplicates.",
+    )
+    clean_min_chars = st.slider("Min characters", 0, 512, 32, 8, disabled=not do_clean)
+    clean_dedup = st.checkbox("Remove near-duplicates", value=True, disabled=not do_clean)
+    val_split = st.slider(
+        "Validation split",
+        0.0,
+        0.5,
+        0.0,
+        0.05,
+        help="If > 0, produce separate train and validation files.",
+    )
 
     st.divider()
     st.caption("All processing (OCR, transcription) runs locally on this machine.")
@@ -366,26 +385,58 @@ if run_button and uploaded_files:
                     st.markdown("**Log**")
                     st.markdown("\n".join(f"- {line}" for line in logs))
 
-        # -- Preview -------------------------------------------------------------
-        if result.samples:
+        # -- Post-processing (clean + split) -------------------------------------
+        samples = result.samples
+        if do_clean and samples:
+            samples, clean_rep = clean_dataset(
+                samples, min_chars=clean_min_chars, dedup=clean_dedup
+            )
+            st.subheader("🧹 Cleaning report")
+            r1, r2, r3, r4 = st.columns(4)
+            r1.metric("Kept", f"{clean_rep.kept_count:,}")
+            r2.metric("Dropped", f"{clean_rep.dropped_total:,}")
+            r3.metric("Duplicates", f"{clean_rep.dropped_duplicate:,}")
+            r4.metric("Short/empty", f"{clean_rep.dropped_short + clean_rep.dropped_empty:,}")
+
+        # -- Preview + download --------------------------------------------------
+        if samples:
             st.subheader("👀 Dataset preview (first 3 samples)")
             with st.expander("Show JSON preview", expanded=True):
-                st.json(result.samples[:3])
+                st.json(samples[:3])
 
-            # -- Download ----------------------------------------------------
-            jsonl_bytes = "\n".join(
-                json.dumps(s, ensure_ascii=False) for s in result.samples
-            ).encode("utf-8")
-            st.download_button(
-                label=f"⬇️ Download {dataset_name}.jsonl",
-                data=jsonl_bytes,
-                file_name=f"{dataset_name}.jsonl",
-                mime="application/jsonl",
-                use_container_width=True,
-                type="primary",
-            )
+            def _jsonl(rows: list[dict[str, Any]]) -> bytes:
+                return "\n".join(json.dumps(s, ensure_ascii=False) for s in rows).encode("utf-8")
+
+            if val_split > 0:
+                train, val = split_dataset(samples, val_fraction=val_split)
+                st.caption(f"Split: **{len(train):,}** train / **{len(val):,}** validation")
+                d1, d2 = st.columns(2)
+                d1.download_button(
+                    label=f"⬇️ {dataset_name}.train.jsonl ({len(train):,})",
+                    data=_jsonl(train),
+                    file_name=f"{dataset_name}.train.jsonl",
+                    mime="application/jsonl",
+                    use_container_width=True,
+                    type="primary",
+                )
+                d2.download_button(
+                    label=f"⬇️ {dataset_name}.val.jsonl ({len(val):,})",
+                    data=_jsonl(val),
+                    file_name=f"{dataset_name}.val.jsonl",
+                    mime="application/jsonl",
+                    use_container_width=True,
+                )
+            else:
+                st.download_button(
+                    label=f"⬇️ Download {dataset_name}.jsonl ({len(samples):,})",
+                    data=_jsonl(samples),
+                    file_name=f"{dataset_name}.jsonl",
+                    mime="application/jsonl",
+                    use_container_width=True,
+                    type="primary",
+                )
         else:
-            st.info("No samples were generated. Check the per-file report above for errors.")
+            st.info("No samples to export. Check the per-file report above (or relax cleaning).")
 
 elif not uploaded_files:
     st.info(

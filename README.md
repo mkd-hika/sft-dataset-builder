@@ -282,6 +282,37 @@ their error message, while successfully processed files still produce samples.
 - RTF extraction prefers `striprtf` if installed; otherwise falls back to a naive regex
   stripper with reduced fidelity.
 
+## Curation & fine-tuning
+
+Post-process a built dataset — deduplicate, filter, and split — and optionally
+generate real instruction/answer pairs.
+
+```bash
+# clean (dedup + drop empty/short/low-signal) and 90/10 train/val split:
+sft-dataset-builder corpus.pdf -o data.jsonl --clean --val-split 0.1
+# -> data.train.jsonl, data.val.jsonl   (add --report stats.json for metrics)
+
+# turn chunks into REAL instruction/answer pairs via a local LLM (Ollama/vLLM):
+sft-dataset-builder corpus.pdf -o instruct.jsonl \
+    --gen-qa --qa-model qwen2.5 --clean --val-split 0.1
+```
+
+From Python:
+```python
+from sft_dataset_builder import build_dataset, clean_dataset, split_dataset
+
+res = build_dataset(["corpus.pdf"], output_format="raw")
+kept, report = clean_dataset(res.samples, min_chars=32)   # dedup + filter
+train, val = split_dataset(kept, val_fraction=0.1, seed=0)
+```
+
+> **Which output is "good for fine-tuning"?** The `raw` format is ideal for
+> **continued pretraining / domain adaptation**. For **instruction tuning**, use
+> `--gen-qa` (or `generate_instruction_samples`) to synthesize genuine
+> instruction/answer pairs from the extracted text, then clean + split. See
+> [`examples/`](examples/) for an end-to-end script and a TRL LoRA fine-tuning
+> example.
+
 ## Development
 
 ```bash

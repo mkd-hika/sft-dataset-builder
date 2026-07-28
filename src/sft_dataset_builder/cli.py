@@ -18,13 +18,16 @@ import argparse
 import json
 import logging
 import sys
+from pathlib import Path
 from typing import Any, Optional, Sequence
 
 from . import __version__
 from .chunker import VALID_STRATEGIES
+from .curation import clean_dataset, quality_report, split_dataset
 from .extractors import SUPPORTED_EXTENSIONS
 from .formatter import VALID_FORMATS
-from .pipeline import build_dataset
+from .instruction_gen import generate_instruction_samples, openai_compatible_client
+from .pipeline import build_dataset, save_jsonl
 
 logger = logging.getLogger("sft_dataset_builder")
 
@@ -122,6 +125,57 @@ def _build_parser() -> argparse.ArgumentParser:
         help="Force a transcription language (e.g. 'en'); autodetect if omitted.",
     )
 
+    post = parser.add_argument_group("post-processing (curation)")
+    post.add_argument(
+        "--clean",
+        action="store_true",
+        help="Clean the dataset: drop empty / too-short / low-signal content and dedup.",
+    )
+    post.add_argument("--min-chars", type=int, default=32, help="Min content chars (with --clean).")
+    post.add_argument(
+        "--max-chars", type=int, default=None, help="Max content chars (with --clean)."
+    )
+    post.add_argument(
+        "--no-dedup",
+        dest="dedup",
+        action="store_false",
+        default=True,
+        help="Disable near-duplicate removal.",
+    )
+    post.add_argument(
+        "--min-signal",
+        type=float,
+        default=0.2,
+        help="Min alphanumeric ratio to keep, filters OCR noise (with --clean).",
+    )
+    post.add_argument(
+        "--val-split",
+        type=float,
+        default=0.0,
+        help="Validation fraction; writes <out>.train.jsonl and <out>.val.jsonl.",
+    )
+    post.add_argument("--seed", type=int, default=0, help="Shuffle seed for --val-split.")
+    post.add_argument(
+        "--report", metavar="PATH", default=None, help="Write a JSON quality report to PATH."
+    )
+
+    qa = parser.add_argument_group("instruction generation (LLM)")
+    qa.add_argument(
+        "--gen-qa",
+        action="store_true",
+        help="Generate real instruction/answer pairs from chunks via an LLM.",
+    )
+    qa.add_argument(
+        "--qa-base-url",
+        default="http://localhost:11434/v1",
+        help="OpenAI-compatible endpoint for --gen-qa (default: local Ollama).",
+    )
+    qa.add_argument("--qa-model", default="qwen2.5", help="Model name for --gen-qa.")
+    qa.add_argument("--qa-api-key", default="", help="API key for --gen-qa, if required.")
+    qa.add_argument(
+        "--qa-max-items", type=int, default=None, help="Cap the number of generated pairs."
+    )
+
     info = parser.add_argument_group("informational")
     info.add_argument("--list-formats", action="store_true", help="List output formats and exit.")
     info.add_argument(
@@ -179,20 +233,81 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         "language": args.language,
     }
 
+    post_processing = bool(args.clean or args.val_split > 0 or args.report or args.gen_qa)
+
     result = build_dataset(
         files=list(args.files),
-        output_format=args.output_format,
+        output_format="raw" if args.gen_qa else args.output_format,
         split_strategy=args.split_strategy,
         chunk_size=args.chunk_size,
         overlap=args.overlap,
         system_prompt=args.system_prompt,
         instruction=args.instruction,
-        save_path=args.output,
+        # When post-processing, save after the extra steps rather than the raw build.
+        save_path=None if post_processing else args.output,
         extractor_kwargs=extractor_kwargs,
         progress_callback=None if args.quiet else on_progress,
     )
 
-    if args.output:
+    samples = result.samples
+
+    if args.gen_qa:
+        complete = openai_compatible_client(
+            base_url=args.qa_base_url, model=args.qa_model, api_key=args.qa_api_key
+        )
+        samples = generate_instruction_samples(
+            samples,
+            complete,
+            output_format=args.output_format,
+            system_prompt=args.system_prompt,
+            max_items=args.qa_max_items,
+            on_error=None
+            if args.quiet
+            else (lambda i, exc: print(f"[gen-qa] chunk {i}: {exc}", file=sys.stderr)),
+        )
+        if not args.quiet:
+            print(f"[gen-qa] generated {len(samples)} instruction pair(s)", file=sys.stderr)
+
+    if args.clean:
+        samples, clean_rep = clean_dataset(
+            samples,
+            min_chars=args.min_chars,
+            max_chars=args.max_chars,
+            dedup=args.dedup,
+            min_signal_ratio=args.min_signal,
+        )
+        if not args.quiet:
+            print(f"[clean] {clean_rep.as_dict()}", file=sys.stderr)
+
+    if args.report:
+        report_path = Path(args.report)
+        report_path.parent.mkdir(parents=True, exist_ok=True)
+        report_path.write_text(
+            json.dumps(quality_report(samples).as_dict(), indent=2, ensure_ascii=False),
+            encoding="utf-8",
+        )
+        if not args.quiet:
+            print(f"[report] wrote {report_path}", file=sys.stderr)
+
+    if post_processing:
+        if args.output:
+            out = Path(args.output)
+            if args.val_split > 0:
+                train, val = split_dataset(samples, val_fraction=args.val_split, seed=args.seed)
+                save_jsonl(train, out.with_suffix(".train.jsonl"))
+                save_jsonl(val, out.with_suffix(".val.jsonl"))
+                if not args.quiet:
+                    print(
+                        f"Wrote {len(train)} train / {len(val)} val next to {out}", file=sys.stderr
+                    )
+            else:
+                save_jsonl(samples, out)
+                if not args.quiet:
+                    print(f"Wrote {len(samples)} sample(s) to {out}", file=sys.stderr)
+        else:
+            for sample in samples:
+                print(json.dumps(sample, ensure_ascii=False))
+    elif args.output:
         if not args.quiet:
             print(
                 f"Wrote {result.num_samples} sample(s) from "
