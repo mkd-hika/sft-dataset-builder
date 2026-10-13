@@ -18,6 +18,17 @@ Use it two ways:
 
 ---
 
+## Try a real example
+
+```bash
+git clone https://github.com/mkd-hika/sft-dataset-builder.git
+cd sft-dataset-builder
+python examples/quickstart.py
+```
+
+The bundled text-only example needs no GPU or third-party packages and produces **3 training samples**. Inspect the [input, actual output, and UI launch instructions](examples/README.md).
+
+
 ## Installation
 
 The **core pipeline is pure-Python** with no third-party dependencies. Heavy,
@@ -25,8 +36,8 @@ format-specific libraries are opt-in via extras, so you only install what you
 need. Each extractor raises a clear message if its extra is missing.
 
 ```bash
-git clone <this-repo>
-cd sft_dataset_builder
+git clone https://github.com/mkd-hika/sft-dataset-builder.git
+cd sft-dataset-builder
 
 # Everything (all extractors + the Streamlit UI):
 pip install -e ".[all]"
@@ -148,8 +159,8 @@ from sft_dataset_builder import build_dataset
 
 result = build_dataset(
     files=["doc.pdf", "img.png", "audio.mp3", "video.mp4"],
-    output_format="alpaca",       # alpaca | sharegpt | openai | raw | dpo | orpo
-    split_strategy="paragraph",   # paragraph | sentence | fixed | page | timestamp
+    output_format="alpaca",  # alpaca | sharegpt | openai | raw | dpo | orpo
+    split_strategy="paragraph",  # paragraph | sentence | fixed | page | timestamp
     chunk_size=2048,
     overlap=200,
     system_prompt="You are a helpful assistant.",
@@ -157,9 +168,9 @@ result = build_dataset(
     save_path="output.jsonl",
 )
 
-print(result.num_samples)          # number of training samples generated
-print(result.num_successful_files) # files processed without error
-print(result.total_chars)          # total characters extracted across all files
+print(result.num_samples)  # number of training samples generated
+print(result.num_successful_files)  # files processed without error
+print(result.total_chars)  # total characters extracted across all files
 
 for report in result.file_reports:
     print(report.path, report.success, report.num_samples, report.error)
@@ -173,9 +184,9 @@ result = build_dataset(
     output_format="sharegpt",
     split_strategy="timestamp",
     extractor_kwargs={
-        "ocr_images": True,        # OCR embedded images in PDFs
-        "model_size": "small",     # whisper model size: tiny/base/small/medium/large
-        "ocr_frames": True,        # OCR sampled video frames
+        "ocr_images": True,  # OCR embedded images in PDFs
+        "model_size": "small",  # whisper model size: tiny/base/small/medium/large
+        "ocr_frames": True,  # OCR sampled video frames
         "frame_interval_seconds": 15.0,
     },
 )
@@ -186,6 +197,7 @@ result = build_dataset(
 ```python
 def on_progress(stage, message, extra):
     print(f"[{stage}] {message}")
+
 
 build_dataset(files=["a.pdf"], progress_callback=on_progress)
 ```
@@ -302,7 +314,7 @@ From Python:
 from sft_dataset_builder import build_dataset, clean_dataset, split_dataset
 
 res = build_dataset(["corpus.pdf"], output_format="raw")
-kept, report = clean_dataset(res.samples, min_chars=32)   # dedup + filter
+kept, report = clean_dataset(res.samples, min_chars=32)  # dedup + filter
 train, val = split_dataset(kept, val_fraction=0.1, seed=0)
 ```
 

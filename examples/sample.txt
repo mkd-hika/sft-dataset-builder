@@ -1,0 +1,5 @@
+Dataset preparation starts by extracting readable text from source files.
+
+Quality checks help identify duplicates, empty records, and formatting problems before training.
+
+Evaluation data should remain separate from the training split to reduce leakage.
