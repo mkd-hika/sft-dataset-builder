@@ -1,0 +1,3 @@
+{"instruction": "Read the following reference passage.", "input": "", "output": "Dataset preparation starts by extracting readable text from source files.", "metadata": {"chunk_index": 0, "source_file": "examples\\sample.txt"}}
+{"instruction": "Read the following reference passage.", "input": "", "output": "Quality checks help identify duplicates, empty records, and formatting problems before training.", "metadata": {"chunk_index": 1, "source_file": "examples\\sample.txt"}}
+{"instruction": "Read the following reference passage.", "input": "", "output": "Evaluation data should remain separate from the training split to reduce leakage.", "metadata": {"chunk_index": 2, "source_file": "examples\\sample.txt"}}
